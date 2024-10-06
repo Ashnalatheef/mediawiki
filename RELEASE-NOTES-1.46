@@ -43,6 +43,11 @@ For notes on 1.45.x and older releases, see HISTORY.
   default value is 100.
 * $wgBotPasswordsLimit - This setting allows administrators to configure the
   maximum number of bot passwords a user can create. The default value is 100.
+* $wgNamespacesWithoutAutoSummaries - (T376557) Defaults to `[]`, can be set to
+  a list of namespace numbers in which automatic edit summaries should
+  be disabled. This avoids users who have access to recent changes but no
+  access to a particular namespace from reading contents of limited pages
+  from edit summaries.
 * …
 
 ==== Changed configuration ====

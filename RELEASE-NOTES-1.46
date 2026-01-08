@@ -1,6 +1,5 @@
 = MediaWiki 1.46 =
 
-PHP 8.2 workboard: https://phabricator.wikimedia.org/tag/php_8.2_support/
 PHP 8.3 workboard: https://phabricator.wikimedia.org/tag/php_8.3_support/
 PHP 8.4 workboard: https://phabricator.wikimedia.org/tag/php_8.4_support/
 PHP 8.5 workboard: https://phabricator.wikimedia.org/tag/php_8.5_support/
@@ -178,6 +177,7 @@ For notes on 1.45.x and older releases, see HISTORY.
 ==== Removed external libraries ====
 
 * Removed symfony/polyfill-php82.
+* Removed symfony/polyfill-php83.
 * …
 
 ===== Removed development-only external libraries =====
@@ -1153,7 +1153,7 @@ because of Phabricator reports.
 
 == Compatibility ==
 
-MediaWiki 1.46 requires PHP 8.2.0 or later and the following PHP extensions:
+MediaWiki 1.46 requires PHP 8.3.0 or later and the following PHP extensions:
 
 * ctype
 * dom

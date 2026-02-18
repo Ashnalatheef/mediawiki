@@ -1142,6 +1142,9 @@ because of Phabricator reports.
   instance of the class.
 * LanguageConverter::getAdditionalFlags() has been deprecated, as it appears
   to be unused and non-functional.
+* wfPercent() has been deprecated and now emits deprecation warnings. Use
+  round() and format the number as appropriate for the language, for example
+  using `wfMessage( 'percent' )->numParams( round( $x, 2 ) )->text()`.
 * …
 
 === Other changes in 1.46 ===

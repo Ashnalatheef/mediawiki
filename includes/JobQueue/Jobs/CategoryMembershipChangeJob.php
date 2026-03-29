@@ -35,7 +35,9 @@ use Wikimedia\Timestamp\TimestampFormat as TS;
  *
  * Category changes will be mentioned for revisions at/after the timestamp for this page
  *
+ * @internal For use by ChangeTrackingEventIngress
  * @since 1.27
+ * @ingroup RecentChanges
  * @ingroup JobQueue
  */
 class CategoryMembershipChangeJob extends Job {

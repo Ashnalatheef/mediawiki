@@ -30,6 +30,7 @@ use MediaWiki\User\UserNameUtils;
  * tracking state according to domain events coming from other components.
  *
  * @internal
+ * @ingroup RecentChanges
  */
 class ChangeTrackingEventIngress
 	extends DomainEventIngress

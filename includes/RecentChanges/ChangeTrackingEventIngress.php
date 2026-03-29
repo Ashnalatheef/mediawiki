@@ -10,7 +10,6 @@ use MediaWiki\DomainEvent\DomainEventIngress;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\JobQueue\JobQueueGroup;
-use MediaWiki\JobQueue\Jobs\CategoryMembershipChangeJob;
 use MediaWiki\JobQueue\Jobs\RevertedTagUpdateJob;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\Event\PageLatestRevisionChangedEvent;

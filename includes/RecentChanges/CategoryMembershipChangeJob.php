@@ -4,7 +4,7 @@
  * @file
  */
 
-namespace MediaWiki\JobQueue\Jobs;
+namespace MediaWiki\RecentChanges;
 
 use MediaWiki\JobQueue\Job;
 use MediaWiki\JobQueue\JobSpecification;
@@ -12,9 +12,6 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPage;
-use MediaWiki\RecentChanges\CategoryMembershipChange;
-use MediaWiki\RecentChanges\RecentChange;
-use MediaWiki\RecentChanges\RecentChangeFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Title\Title;
@@ -301,6 +298,3 @@ class CategoryMembershipChangeJob extends Job {
 		return $info;
 	}
 }
-
-/** @deprecated class alias since 1.44 */
-class_alias( CategoryMembershipChangeJob::class, 'CategoryMembershipChangeJob' );

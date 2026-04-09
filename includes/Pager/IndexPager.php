@@ -497,6 +497,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 		}
 
 		return [
+			// NOTE: The `array_merge` here will override any previously set conflicting options (e.g. HAVING)
 			$tables, $fields, array_merge( $conds, $offsetConds ), $fname, array_merge( $options, $sortOptions ),
 			$join_conds
 		];
@@ -529,11 +530,26 @@ abstract class IndexPager extends ContextSource implements Pager {
 		if ( $offset ) {
 			$offsets = explode( '|', $offset, /* Limit to max of indices */ count( $indexColumns ) );
 
-			$conds = $this->buildOffsetConds(
+			if ( $this->indexUsesAggregate() && $this->mDb->getType() === 'postgres' ) {
+				// Postgres doesn't allow aliases in HAVING, so expand them if possible. Don't do that in other
+				// DBMSs so that the query remains more readable.
+				$fields = $this->getQueryInfo()['fields'];
+				foreach ( $indexColumns as $key => $col ) {
+					$indexColumns[$key] = $fields[$col] ?? $col;
+				}
+			}
+
+			$offsetConds = $this->buildOffsetConds(
 				$offsets,
 				$indexColumns,
 				$operator
 			);
+
+			if ( $this->indexUsesAggregate() ) {
+				$options['HAVING'] = $offsetConds;
+			} else {
+				$conds = $offsetConds;
+			}
 		}
 		$options['LIMIT'] = $limit;
 		return [ $conds, $options ];
@@ -953,6 +969,19 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @return string|string[]|array[]
 	 */
 	abstract public function getIndexField();
+
+	/**
+	 * Returns whether the index field, as provided by {@link self::getIndexField}, uses an aggregate function.
+	 * This lets us adjust the query accordingly (e.g., using HAVING instead of WHERE). See T308694.
+	 *
+	 * @note For Postgres support, make sure that any aliases used here are included in the field list returned
+	 * by {@link self::getQueryInfo}.
+	 *
+	 * @since 1.46
+	 */
+	protected function indexUsesAggregate(): bool {
+		return false;
+	}
 
 	/**
 	 * Returns the names of secondary columns to order by in addition to the

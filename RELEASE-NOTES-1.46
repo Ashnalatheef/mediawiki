@@ -1088,7 +1088,7 @@ because of Phabricator reports.
   $this->getRestriction() instead to get the value.
 * The usage of the SpecialPage constructor parameter $restriction is
   deprecated. Override the method getRestriction() instead.
-* Calling File::getShortDesc, File::getLongDesc,
+* Calling File::getShortDesc, File::getLongDesc, File::getDescriptionText,
   MediaHandler::getGeneralShortDesc or MediaHandler::getGeneralLongDesc
   without specifying a language is deprecated.
   Inject the suitable context language, falling back to RequestContext.

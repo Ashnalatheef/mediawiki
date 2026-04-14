@@ -243,6 +243,16 @@ class SpecialListGroupRights extends SpecialPage {
 		$out = $this->getOutput();
 		$restrictedGroups = $this->restrictedUserGroupConfigReader->getConfig();
 
+		$allGroups = array_merge(
+			$this->userGroupManager->listAllGroups(),
+			$this->userGroupManager->listAllImplicitGroups()
+		);
+		$restrictedGroups = array_filter(
+			$restrictedGroups,
+			static fn ( $restriction, $group ) => in_array( $group, $allGroups ) && $restriction->hasAnyConditions(),
+			ARRAY_FILTER_USE_BOTH
+		);
+
 		if ( !$restrictedGroups ) {
 			return;
 		}
@@ -253,30 +263,24 @@ class SpecialListGroupRights extends SpecialPage {
 				'id' => Sanitizer::escapeIdForAttribute( self::RESTRICTED_GROUPS_SECTION_ID )
 			], $header ) .
 			Html::openElement( 'table', [ 'class' => 'wikitable mw-listgrouprights-table' ] ) .
-			Html::element(
-				'th',
-				[],
-				$this->msg( 'listgrouprights-group' )->text()
-			) .
-			Html::element(
-				'th',
-				[],
-				$this->msg( 'listgrouprights-restrictedgroups-config' )->text()
+			Html::rawElement( 'tr', [],
+				Html::element(
+					'th',
+					[],
+					$this->msg( 'listgrouprights-group' )->text()
+				) .
+				Html::element(
+					'th',
+					[],
+					$this->msg( 'listgrouprights-restrictedgroups-config' )->text()
+				)
 			)
 		);
 		ksort( $restrictedGroups );
 
 		$lang = $this->getLanguage();
 		$linkRenderer = $this->getLinkRenderer();
-		$allGroups = array_merge(
-			$this->userGroupManager->listAllGroups(),
-			$this->userGroupManager->listAllImplicitGroups()
-		);
 		foreach ( $restrictedGroups as $group => $groupConfig ) {
-			if ( !$groupConfig->hasAnyConditions() || !in_array( $group, $allGroups ) ) {
-				continue;
-			}
-
 			$out->addHTML(
 				Html::openElement(
 					'tr',

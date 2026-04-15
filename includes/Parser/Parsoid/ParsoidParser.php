@@ -117,7 +117,7 @@ class ParsoidParser /* eventually this will extend \Parser */ {
 				$previousOutput->getLanguage()
 			);
 			$oldPageBundle =
-				PageBundleParserOutputConverter::pageBundleFromParserOutput(
+				PageBundleParserOutputConverter::htmlPageBundleFromParserOutput(
 					$previousOutput
 				);
 		}

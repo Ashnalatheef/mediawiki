@@ -86,6 +86,7 @@ final class PageBundleParserOutputConverter {
 	 * @deprecated Use ::htmlPageBundleFromParserOutput
 	 */
 	public static function pageBundleFromParserOutput( ParserOutput $parserOutput ): HtmlPageBundle {
+		wfDeprecated( __METHOD__, '1.46' );
 		return self::htmlPageBundleFromParserOutput( $parserOutput );
 	}
 

@@ -353,6 +353,8 @@ because of Phabricator reports.
   Instead, use Codex modules.
 * The mediawiki.ui.radio module, deprecated in 1.41 and unused, was removed.
   Instead, use Codex modules.
+* The globally available 'mediawiki.ui/mixins.buttons.less', deprecated in 1.34,
+  was removed as generally available mixin.
 * Less mixin 'mediawiki.mixins.animation.less', deprecated in 1.39, was removed.
   Use standard CSS animation and transform instead.
 * The $wgUser variable, deprecated in 1.36, was removed. You can instead use

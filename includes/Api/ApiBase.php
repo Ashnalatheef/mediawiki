@@ -1978,6 +1978,11 @@ abstract class ApiBase extends ContextSource {
 							$summary = $submod->getFinalSummary();
 							$isDeprecated = $submod->isDeprecated();
 							$isInternal = $submod->isInternal();
+							if ( $isDeprecated ) {
+								// Provide a deprecation message if available
+								$isDeprecated = $submod->deprecationMsg() ??
+									$isDeprecated;
+							}
 						}
 					} catch ( ApiUsageException ) {
 						// Ignore
@@ -2030,12 +2035,17 @@ abstract class ApiBase extends ContextSource {
 				foreach ( $values as $value ) {
 					$msg = Message::newFromSpecifier( $valueMsgs[$value] ?? "apihelp-$path-paramvalue-$param-$value" );
 					$m = $this->msg( $msg, [ $prefix, $param, $name, $path, $value ] );
+					$deprecationMsg = $deprecatedValues[$value] ?? false;
+					$deprecationMsg = (
+						is_bool( $deprecationMsg ) || $deprecationMsg instanceof MessageSpecifier
+					) ? $deprecationMsg : ApiMessage::create( $deprecationMsg );
+
 					$m = new ApiHelpParamValueMessage(
 						$value,
 						// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal
 						[ $m->getKey(), 'api-help-param-no-description' ],
 						$m->getParams(),
-						isset( $deprecatedValues[$value] )
+						$deprecationMsg
 					);
 					$msgs[$param][] = $m->setContext( $this->getContext() );
 				}

@@ -89,8 +89,10 @@ use MediaWiki\User\Registration\UserRegistrationLookup;
 use MediaWiki\User\TempUser\CreateStatus;
 use MediaWiki\User\TempUser\TempUserCreator;
 use MediaWiki\User\User;
+use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserIdentityUtils;
 use MediaWiki\Watchlist\WatchedItem;
 use MediaWiki\Watchlist\WatchedItemStoreInterface;
 use MediaWiki\Watchlist\WatchlistLabelStore;
@@ -422,6 +424,8 @@ class EditPage implements IEditObject {
 	private SessionManager $sessionManager;
 	private EditConstraintFactory $constraintFactory;
 	private PageEditingHelper $pageEditingHelper;
+	private UserIdentityUtils $userIdentityUtils;
+	private UserEditTracker $userEditTracker;
 
 	/** @var User|null */
 	private $placeholderTempUser;
@@ -492,6 +496,8 @@ class EditPage implements IEditObject {
 		$this->sessionManager = $services->getSessionManager();
 		$this->constraintFactory = $services->getService( '_EditConstraintFactory' );
 		$this->pageEditingHelper = $services->getService( '_PageEditingHelper' );
+		$this->userIdentityUtils = $services->getUserIdentityUtils();
+		$this->userEditTracker = $services->getUserEditTracker();
 
 		$this->deprecatePublicProperty( 'textbox2', '1.44', __CLASS__ );
 		$this->deprecatePublicProperty( 'action', '1.38', __CLASS__ );
@@ -888,10 +894,8 @@ class EditPage implements IEditObject {
 	/**
 	 * Get the user suitable for permanent attribution in the database. This
 	 * asserts that an anonymous user won't be used in IP masking mode.
-	 *
-	 * @return User
 	 */
-	private function getUserForSave() {
+	private function getUserForSave(): UserIdentity {
 		if ( $this->savedTempUser ) {
 			return $this->savedTempUser;
 		} elseif ( $this->tempUserCreateActive ) {
@@ -1946,7 +1950,7 @@ class EditPage implements IEditObject {
 		// the top-level redirect if this a first edit on
 		// a wiki that is not the user's home wiki.
 		$shouldRedirectForTempUser = $this->tempUserCreateDone ||
-			( $user->isTemp() && ( $user->getEditCount() === 0 ) );
+			( $this->userIdentityUtils->isTemp( $user ) && $this->userEditTracker->getUserEditCount( $user ) === 0 );
 		if ( $shouldRedirectForTempUser ) {
 			$this->getHookRunner()->onTempUserCreatedRedirect(
 				$this->context->getRequest()->getSession(),
@@ -2679,8 +2683,8 @@ class EditPage implements IEditObject {
 		if ( $this->tempUserCreateActive ) {
 			return;
 		}
-		$user = $this->getUserForSave();
-		if ( !$user->isNamed() ) {
+		$authority = $this->getAuthority();
+		if ( !$authority->isNamed() ) {
 			return;
 		}
 
@@ -2690,7 +2694,13 @@ class EditPage implements IEditObject {
 		// This can't run as a DeferredUpdate due to a possible race condition
 		// when the post-edit redirect happens if the pendingUpdates queue is
 		// too large to finish in time (T259564)
-		$this->watchlistManager->setWatch( $watch, $user, $this->page, $watchlistExpiry, $this->watchlistLabels );
+		$this->watchlistManager->setWatch(
+			$watch,
+			$authority,
+			$this->page,
+			$watchlistExpiry,
+			$this->watchlistLabels
+		);
 
 		$this->watchedItemStore->maybeEnqueueWatchlistExpiryJob();
 	}

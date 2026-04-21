@@ -357,6 +357,8 @@ because of Phabricator reports.
   Use standard CSS animation and transform instead.
 * The $wgUser variable, deprecated in 1.36, was removed. You can instead use
   RequestContext::getMain()->getUser(), or another available ContextSource.
+* EditPage::$action, deprecated in 1.38, was removed.
+* EditPage::$textbox2, deprecated in 1.44, was removed.
 * …
 
 === Deprecations in 1.46 ===

@@ -870,10 +870,8 @@ class EditPage implements IEditObject {
 	/**
 	 * Get the user for preview or PST purposes. During the temporary user
 	 * creation flow this may be an unsaved temporary user.
-	 *
-	 * @return User
 	 */
-	private function getUserForPreview() {
+	private function getUserForPreview(): UserIdentity {
 		if ( $this->savedTempUser ) {
 			return $this->savedTempUser;
 		} elseif ( $this->unsavedTempUser ) {
@@ -2459,7 +2457,7 @@ class EditPage implements IEditObject {
 	private function getNewPageChecksRunner(
 		Content $content,
 		bool $markAsMinor,
-		User $pstUser,
+		UserIdentity $pstUser,
 		string $submitButtonLabel,
 	): EditConstraintRunner {
 		return new EditConstraintRunner(
@@ -2488,7 +2486,7 @@ class EditPage implements IEditObject {
 		Authority $authority,
 		Content $content,
 		bool $markAsMinor,
-		User $pstUser,
+		UserIdentity $pstUser,
 		string $submitButtonLabel,
 	): EditConstraintRunner {
 		return new EditConstraintRunner(
@@ -2527,7 +2525,7 @@ class EditPage implements IEditObject {
 				$this->oldid,
 				$this->section,
 				$this->getTitle(),
-				$pstUser,
+				$this->getAuthority(),
 				MessageValue::new(
 					'edit-constraint-warning-wrapper-save-deleted-revision',
 					[ MessageValue::new( $submitButtonLabel ) ],

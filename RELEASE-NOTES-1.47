@@ -62,6 +62,7 @@ For notes on 1.46.x and older releases, see HISTORY.
 
 ==== Changed external libraries ====
 
+* Updated symfony/yaml from 7.4.6 to 7.4.8.
 * Updated wikimedia/json-codec from 4.0.0 to 5.0.0.
 * …
 

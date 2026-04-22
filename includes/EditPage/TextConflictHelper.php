@@ -130,19 +130,6 @@ class TextConflictHelper {
 		}
 	}
 
-	/**
-	 * Retained temporarily for backwards-compatibility.
-	 *
-	 * This action should be moved into incrementConflictStats, incrementResolvedStats.
-	 *
-	 * @deprecated since 1.42, do not use
-	 */
-	protected function incrementStatsByUserEdits( ?int $userEdits, string $keyPrefixBase ): void {
-		if ( $this->stats instanceof IBufferingStatsdDataFactory ) {
-			$this->stats->increment( $keyPrefixBase . '.byUserEdits.' . $this->getUserBucket( $userEdits ) );
-		}
-	}
-
 	protected function getUserBucket( ?int $userEdits ): string {
 		if ( $userEdits === null ) {
 			return 'anon';

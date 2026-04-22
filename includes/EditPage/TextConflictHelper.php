@@ -26,25 +26,11 @@ use Wikimedia\Stats\StatsFactory;
  */
 class TextConflictHelper {
 
-	/**
-	 * @var null|string
-	 */
-	public $contentModel;
+	public ?string $contentModel = null;
+	public ?string $contentFormat = null;
 
-	/**
-	 * @var null|string
-	 */
-	public $contentFormat;
-
-	/**
-	 * @var string
-	 */
-	protected $yourtext = '';
-
-	/**
-	 * @var string
-	 */
-	protected $storedversion = '';
+	protected string $yourtext = '';
+	protected string $storedversion = '';
 
 	private readonly TextboxBuilder $textboxBuilder;
 
@@ -75,34 +61,23 @@ class TextConflictHelper {
 		$this->textboxBuilder = $textboxBuilder ?? MediaWikiServices::getInstance()->getTextboxBuilder();
 	}
 
-	/**
-	 * @param string $yourtext
-	 * @param string $storedversion
-	 */
-	public function setTextboxes( $yourtext, $storedversion ) {
+	public function setTextboxes( string $yourtext, string $storedversion ): void {
 		$this->yourtext = $yourtext;
 		$this->storedversion = $storedversion;
 	}
 
-	/**
-	 * @param string $contentModel
-	 */
-	public function setContentModel( $contentModel ) {
+	public function setContentModel( string $contentModel ): void {
 		$this->contentModel = $contentModel;
 	}
 
-	/**
-	 * @param string $contentFormat
-	 */
-	public function setContentFormat( $contentFormat ) {
+	public function setContentFormat( string $contentFormat ): void {
 		$this->contentFormat = $contentFormat;
 	}
 
 	/**
 	 * Record a user encountering an edit conflict
-	 * @param User|null $user
 	 */
-	public function incrementConflictStats( ?User $user = null ) {
+	public function incrementConflictStats( ?User $user = null ): void {
 		$namespace = 'n/a';
 		$userBucket = 'n/a';
 
@@ -128,9 +103,8 @@ class TextConflictHelper {
 
 	/**
 	 * Record when a user has resolved an edit conflict
-	 * @param User|null $user
 	 */
-	public function incrementResolvedStats( ?User $user = null ) {
+	public function incrementResolvedStats( ?User $user = null ): void {
 		$namespace = 'n/a';
 		$userBucket = 'n/a';
 
@@ -162,19 +136,13 @@ class TextConflictHelper {
 	 * This action should be moved into incrementConflictStats, incrementResolvedStats.
 	 *
 	 * @deprecated since 1.42, do not use
-	 * @param int|null $userEdits
-	 * @param string $keyPrefixBase
 	 */
-	protected function incrementStatsByUserEdits( $userEdits, $keyPrefixBase ) {
+	protected function incrementStatsByUserEdits( ?int $userEdits, string $keyPrefixBase ): void {
 		if ( $this->stats instanceof IBufferingStatsdDataFactory ) {
 			$this->stats->increment( $keyPrefixBase . '.byUserEdits.' . $this->getUserBucket( $userEdits ) );
 		}
 	}
 
-	/**
-	 * @param int|null $userEdits
-	 * @return string
-	 */
 	protected function getUserBucket( ?int $userEdits ): string {
 		if ( $userEdits === null ) {
 			return 'anon';
@@ -192,7 +160,7 @@ class TextConflictHelper {
 	/**
 	 * @return string HTML
 	 */
-	public function getExplainHeader() {
+	public function getExplainHeader(): string {
 		return Html::rawElement(
 			'div',
 			[ 'class' => 'mw-explainconflict' ],
@@ -203,10 +171,9 @@ class TextConflictHelper {
 	/**
 	 * HTML to build the textbox1 on edit conflicts
 	 *
-	 * @param array $customAttribs
 	 * @return string HTML
 	 */
-	public function getEditConflictMainTextBox( array $customAttribs = [] ) {
+	public function getEditConflictMainTextBox( array $customAttribs = [] ): string {
 		$classes = $this->textboxBuilder->getTextboxProtectionCSSClasses( $this->title );
 
 		$attribs = [
@@ -238,7 +205,7 @@ class TextConflictHelper {
 	 * @see EditPage::$editFormTextBeforeContent
 	 * @return string HTML
 	 */
-	public function getEditFormHtmlBeforeContent() {
+	public function getEditFormHtmlBeforeContent(): string {
 		return '';
 	}
 
@@ -248,7 +215,7 @@ class TextConflictHelper {
 	 * @see EditPage::$editFormTextAfterContent
 	 * @return string HTML
 	 */
-	public function getEditFormHtmlAfterContent() {
+	public function getEditFormHtmlAfterContent(): string {
 		return '';
 	}
 
@@ -256,7 +223,7 @@ class TextConflictHelper {
 	 * Content to go in the edit form after the footers
 	 * (templates on this page, hidden categories, limit report)
 	 */
-	public function showEditFormTextAfterFooters() {
+	public function showEditFormTextAfterFooters(): void {
 		$this->out->wrapWikiMsg( '<h2>$1</h2>', "yourdiff" );
 
 		$yourContent = $this->toEditContent( $this->yourtext );
@@ -284,11 +251,7 @@ class TextConflictHelper {
 		);
 	}
 
-	/**
-	 * @param string $text
-	 * @return Content
-	 */
-	private function toEditContent( $text ) {
+	private function toEditContent( string $text ): Content {
 		return ContentHandler::makeContent(
 			$text,
 			$this->title,

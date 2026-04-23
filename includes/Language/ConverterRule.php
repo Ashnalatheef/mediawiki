@@ -493,6 +493,9 @@ class ConverterRule {
 					}
 				}
 			}
+			// If no variant matched, fallback to displaying the filter rule
+			// contents as literal text instead.
+			// T424275: should probably display an error message instead
 			$this->mFlags = $flags = [ 'R' => true ];
 		}
 
@@ -606,6 +609,7 @@ class ConverterRule {
 				}
 			}
 			// No matching variant; fallback to displaying the empty string.
+			// T424275: should probably display an error message instead
 			$this->mRuleDisplay = '';
 			$this->mFlags['R'] = true;
 		}

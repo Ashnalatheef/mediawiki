@@ -15,7 +15,6 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\OutputPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
-use Wikimedia\Stats\IBufferingStatsdDataFactory;
 use Wikimedia\Stats\StatsFactory;
 
 /**
@@ -37,7 +36,7 @@ class TextConflictHelper {
 	/**
 	 * @param Title $title
 	 * @param OutputPage $out
-	 * @param IBufferingStatsdDataFactory|StatsFactory $stats
+	 * @param StatsFactory $stats
 	 * @param string $submitLabel Message key for the label of the submit button
 	 * @param IContentHandlerFactory $contentHandlerFactory Required param with legacy support
 	 * @param TextboxBuilder|null $textboxBuilder
@@ -47,7 +46,7 @@ class TextConflictHelper {
 	public function __construct(
 		protected readonly Title $title,
 		protected readonly OutputPage $out,
-		protected readonly IBufferingStatsdDataFactory|StatsFactory $stats,
+		protected readonly StatsFactory $stats,
 		protected readonly string $submitLabel,
 		private readonly IContentHandlerFactory $contentHandlerFactory,
 		?TextboxBuilder $textboxBuilder = null,
@@ -92,13 +91,11 @@ class TextConflictHelper {
 		if ( $user ) {
 			$userBucket = $this->getUserBucket( $user->getEditCount() );
 		}
-		if ( $this->stats instanceof StatsFactory ) {
-			$this->stats->getCounter( 'edit_failure_total' )
-				->setLabel( 'cause', 'conflict' )
-				->setLabel( 'namespace', $namespace )
-				->setLabel( 'user_bucket', $userBucket )
-				->increment();
-		}
+		$this->stats->getCounter( 'edit_failure_total' )
+			->setLabel( 'cause', 'conflict' )
+			->setLabel( 'namespace', $namespace )
+			->setLabel( 'user_bucket', $userBucket )
+			->increment();
 	}
 
 	/**
@@ -121,13 +118,11 @@ class TextConflictHelper {
 			$userBucket = $this->getUserBucket( $user->getEditCount() );
 		}
 
-		if ( $this->stats instanceof StatsFactory ) {
-			$this->stats->getCounter( 'edit_failure_resolved_total' )
-				->setLabel( 'cause', 'conflict' )
-				->setLabel( 'namespace', $namespace )
-				->setLabel( 'user_bucket', $userBucket )
-				->increment();
-		}
+		$this->stats->getCounter( 'edit_failure_resolved_total' )
+			->setLabel( 'cause', 'conflict' )
+			->setLabel( 'namespace', $namespace )
+			->setLabel( 'user_bucket', $userBucket )
+			->increment();
 	}
 
 	protected function getUserBucket( ?int $userEdits ): string {

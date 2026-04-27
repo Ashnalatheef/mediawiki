@@ -233,10 +233,10 @@ class ConverterRule {
 				$v = trim( $u[1] );
 				$vv = $this->mConverter->validateVariant( $v );
 				// if $from is empty, strtr() could return a wrong result.
-				if ( array_key_exists( $vv, $unidtable )
+				if ( $vv && array_key_exists( $vv, $unidtable )
 					&& !is_array( $unidtable[$vv] )
 					&& $from !== ''
-					&& $vv ) {
+				) {
 					$unidtable[$vv] = [ $from => $to ];
 				} elseif ( $from !== '' && $vv ) {
 					$unidtable[$vv][$from] = $to;

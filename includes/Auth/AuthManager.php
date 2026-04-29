@@ -6,6 +6,8 @@
 
 namespace MediaWiki\Auth;
 
+use DomainException;
+use Exception;
 use InvalidArgumentException;
 use LogicException;
 use MediaWiki\Auth\Hook\AuthManagerVerifyAuthenticationHook;
@@ -50,7 +52,9 @@ use MediaWiki\Watchlist\WatchlistManager;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use RuntimeException;
 use StatusValue;
+use UnexpectedValueException;
 use Wikimedia\NormalizedException\NormalizedException;
 use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\Rdbms\IDBAccessObject;
@@ -350,11 +354,11 @@ class AuthManager implements LoggerAwareInterface {
 			$user = $this->userFactory->newFromName( (string)$req->username );
 			// @codeCoverageIgnoreStart
 			if ( !$user ) {
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					"CreatedAccountAuthenticationRequest had invalid username \"{$req->username}\""
 				);
 			} elseif ( $user->getId() != $req->id ) {
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					"ID for \"{$req->username}\" was {$user->getId()}, expected {$req->id}"
 				);
 			}
@@ -580,7 +584,7 @@ class AuthManager implements LoggerAwareInterface {
 
 							// @codeCoverageIgnoreStart
 						default:
-							throw new \DomainException(
+							throw new DomainException(
 								get_class( $provider ) . "::beginPrimaryAuthentication() returned $res->status"
 							);
 							// @codeCoverageIgnoreEnd
@@ -650,7 +654,7 @@ class AuthManager implements LoggerAwareInterface {
 						$session->setSecret( self::AUTHN_STATE, $state );
 						return $res;
 					default:
-						throw new \DomainException(
+						throw new DomainException(
 							get_class( $provider ) . "::continuePrimaryAuthentication() returned $res->status"
 						);
 				}
@@ -733,7 +737,7 @@ class AuthManager implements LoggerAwareInterface {
 			);
 			if ( !$user ) {
 				$provider = $this->getAuthenticationProvider( $state['primary'] );
-				throw new \DomainException(
+				throw new DomainException(
 					get_class( $provider ) . " returned an invalid username: {$res->username}"
 				);
 			}
@@ -818,7 +822,7 @@ class AuthManager implements LoggerAwareInterface {
 
 						// @codeCoverageIgnoreStart
 					default:
-						throw new \DomainException(
+						throw new DomainException(
 							get_class( $provider ) . "::{$func}() returned $res->status"
 						);
 						// @codeCoverageIgnoreEnd
@@ -881,7 +885,7 @@ class AuthManager implements LoggerAwareInterface {
 					'performer' => $performer
 				] );
 			return $response;
-		} catch ( \Exception $ex ) {
+		} catch ( Exception $ex ) {
 			$session->remove( self::AUTHN_STATE );
 			throw $ex;
 		}
@@ -932,7 +936,7 @@ class AuthManager implements LoggerAwareInterface {
 			} elseif ( isset( $thresholds['default'] ) ) {
 				$threshold = $thresholds['default'];
 			} else {
-				throw new \UnexpectedValueException( '$wgReauthenticateTime lacks a default' );
+				throw new UnexpectedValueException( '$wgReauthenticateTime lacks a default' );
 			}
 
 			if ( $threshold >= 0 && $timeSinceLogin > $threshold ) {
@@ -942,13 +946,14 @@ class AuthManager implements LoggerAwareInterface {
 			$timeSinceLogin = -1;
 
 			$pass = $this->config->get(
-				MainConfigNames::AllowSecuritySensitiveOperationIfCannotReauthenticate );
+				MainConfigNames::AllowSecuritySensitiveOperationIfCannotReauthenticate
+			);
 			if ( isset( $pass[$operation] ) ) {
 				$status = $pass[$operation] ? self::SEC_OK : self::SEC_FAIL;
 			} elseif ( isset( $pass['default'] ) ) {
 				$status = $pass['default'] ? self::SEC_OK : self::SEC_FAIL;
 			} else {
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					'$wgAllowSecuritySensitiveOperationIfCannotReauthenticate lacks a default'
 				);
 			}
@@ -1130,7 +1135,7 @@ class AuthManager implements LoggerAwareInterface {
 		$status = Status::wrap( $req->validate() );
 		if ( !$status->isOK() ) {
 			// Caller should have tried with allowsAuthenticationDataChange() first.
-			throw new \LogicException( "Invalid auth data submitted for change for '{$req->username}': "
+			throw new LogicException( "Invalid auth data submitted for change for '{$req->username}': "
 				. $status->getWikiText( false, false, 'en' ) );
 		}
 
@@ -1345,7 +1350,7 @@ class AuthManager implements LoggerAwareInterface {
 
 		try {
 			$username = AuthenticationRequest::getUsernameFromRequests( $reqs );
-		} catch ( \UnexpectedValueException ) {
+		} catch ( UnexpectedValueException ) {
 			$username = null;
 		}
 		if ( $username === null ) {
@@ -1550,7 +1555,7 @@ class AuthManager implements LoggerAwareInterface {
 						'creator' => $creator->getName(),
 						'expected_id' => $state['userid'],
 					] );
-					throw new \UnexpectedValueException(
+					throw new UnexpectedValueException(
 						"User \"{$state['username']}\" should exist now, but doesn't!"
 					);
 				}
@@ -1561,7 +1566,7 @@ class AuthManager implements LoggerAwareInterface {
 						'expected_id' => $state['userid'],
 						'actual_id' => $user->getId(),
 					] );
-					throw new \UnexpectedValueException(
+					throw new UnexpectedValueException(
 						"User \"{$state['username']}\" exists, but " .
 							"ID {$user->getId()} !== {$state['userid']}!"
 					);
@@ -1682,7 +1687,7 @@ class AuthManager implements LoggerAwareInterface {
 
 							// @codeCoverageIgnoreStart
 						default:
-							throw new \DomainException(
+							throw new DomainException(
 								get_class( $provider ) . "::beginPrimaryAccountCreation() returned $res->status"
 							);
 							// @codeCoverageIgnoreEnd
@@ -1748,7 +1753,7 @@ class AuthManager implements LoggerAwareInterface {
 						$session->setSecret( self::ACCOUNT_CREATION_STATE, $state );
 						return $res;
 					default:
-						throw new \DomainException(
+						throw new DomainException(
 							get_class( $provider ) . "::continuePrimaryAccountCreation() returned $res->status"
 						);
 				}
@@ -1862,14 +1867,14 @@ class AuthManager implements LoggerAwareInterface {
 						$session->setSecret( self::ACCOUNT_CREATION_STATE, $state );
 						return $res;
 					case AuthenticationResponse::FAIL:
-						throw new \DomainException(
+						throw new DomainException(
 							get_class( $provider ) . "::{$func}() returned $res->status." .
 							' Secondary providers are not allowed to fail account creation, that' .
 							' should have been done via testForAccountCreation().'
 						);
 							// @codeCoverageIgnoreStart
 					default:
-						throw new \DomainException(
+						throw new DomainException(
 							get_class( $provider ) . "::{$func}() returned $res->status"
 						);
 							// @codeCoverageIgnoreEnd
@@ -1892,7 +1897,7 @@ class AuthManager implements LoggerAwareInterface {
 			$session->remove( self::ACCOUNT_CREATION_STATE );
 			$this->removeAuthenticationSessionData( null );
 			return $ret;
-		} catch ( \Exception $ex ) {
+		} catch ( Exception $ex ) {
 			$session->remove( self::ACCOUNT_CREATION_STATE );
 			throw $ex;
 		}
@@ -2207,7 +2212,7 @@ class AuthManager implements LoggerAwareInterface {
 				$this->logAutocreationAttempt( $status, $user, $source, $login );
 				return $status;
 			}
-		} catch ( \Exception $ex ) {
+		} catch ( Exception $ex ) {
 			$this->logger->error( __METHOD__ . ': {username} failed with exception {exception}', [
 				'username' => $username,
 				'exception' => $ex,
@@ -2420,7 +2425,7 @@ class AuthManager implements LoggerAwareInterface {
 
 					// @codeCoverageIgnoreStart
 				default:
-					throw new \DomainException(
+					throw new DomainException(
 						get_class( $provider ) . "::beginPrimaryAccountLink() returned $res->status"
 					);
 					// @codeCoverageIgnoreEnd
@@ -2470,7 +2475,7 @@ class AuthManager implements LoggerAwareInterface {
 				return AuthenticationResponse::newFail( wfMessage( 'noname' ) );
 			}
 			if ( $user->getId() !== $state['userid'] ) {
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					"User \"{$state['username']}\" is valid, but " .
 						"ID {$user->getId()} !== {$state['userid']}!"
 				);
@@ -2561,11 +2566,11 @@ class AuthManager implements LoggerAwareInterface {
 					$session->setSecret( self::ACCOUNT_LINK_STATE, $state );
 					return $res;
 				default:
-					throw new \DomainException(
+					throw new DomainException(
 						get_class( $provider ) . "::continuePrimaryAccountLink() returned $res->status"
 					);
 			}
-		} catch ( \Exception $ex ) {
+		} catch ( Exception $ex ) {
 			$session->remove( self::ACCOUNT_LINK_STATE );
 			throw $ex;
 		}
@@ -2649,7 +2654,7 @@ class AuthManager implements LoggerAwareInterface {
 
 			// @codeCoverageIgnoreStart
 			default:
-				throw new \DomainException( __METHOD__ . ": Invalid action \"$action\"" );
+				throw new DomainException( __METHOD__ . ": Invalid action \"$action\"" );
 		}
 		// @codeCoverageIgnoreEnd
 
@@ -2897,7 +2902,7 @@ class AuthManager implements LoggerAwareInterface {
 			$provider->init( $this->logger, $this, $this->getHookContainer(), $this->config, $this->userNameUtils );
 			$id = $provider->getUniqueId();
 			if ( isset( $this->allAuthenticationProviders[$id] ) ) {
-				throw new \RuntimeException(
+				throw new RuntimeException(
 					"Duplicate specifications for id $id (classes " .
 					get_class( $provider ) . ' and ' .
 					get_class( $this->allAuthenticationProviders[$id] ) . ')'

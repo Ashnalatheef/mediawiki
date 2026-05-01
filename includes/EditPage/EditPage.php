@@ -54,7 +54,6 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Message\Message;
 use MediaWiki\Page\Article;
 use MediaWiki\Page\CategoryPage;
 use MediaWiki\Page\LinkBatchFactory;
@@ -1359,14 +1358,11 @@ class EditPage implements IEditObject {
 		}
 
 		if ( !$content ) {
-			$out = $this->context->getOutput();
-			// FIXME Why is this double-parsing?
-			$this->editFormPageTop .= Html::errorBox(
-				$out->parseAsInterface( $this->context->msg( 'missing-revision-content',
-					$this->oldid,
-					Message::plaintextParam( $this->getTitle()->getPrefixedText() )
-				)->parse() )
-			);
+			$this->editFormPageTop .= Html::errorBox( $this->context->msg(
+				'missing-revision-content',
+				$this->oldid,
+				wfEscapeWikiText( $this->getTitle()->getPrefixedText() )
+			)->parse() );
 		} elseif ( !$this->pageEditingHelper->isSupportedContentModel(
 			$content->getModel(), $this->enableApiEditOverride,
 		) ) {

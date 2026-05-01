@@ -190,8 +190,8 @@ class EditPage implements IEditObject {
 	 */
 	public bool $isConflict = false;
 
-	/** @var bool New page or new section */
-	private $isNew = false;
+	/** New page or new section */
+	private bool $isNew = false;
 
 	/** @var string */
 	public $formtype;
@@ -202,22 +202,17 @@ class EditPage implements IEditObject {
 	 */
 	public $firsttime;
 
-	/** @var bool */
-	private $mTokenOk = false;
+	private bool $mTokenOk = false;
 
-	/** @var bool */
-	private $mTriedSave = false;
+	private bool $mTriedSave = false;
 
-	/** @var bool */
-	private $incompleteForm = false;
+	private bool $incompleteForm = false;
 
-	/** @var bool */
-	private $missingSummary = false;
+	private bool $missingSummary = false;
 
 	private bool $allowBlankSummary = false;
 
-	/** @var bool */
-	protected $blankArticle = false;
+	protected bool $blankArticle = false;
 
 	private bool $allowBlankArticle = false;
 
@@ -231,37 +226,32 @@ class EditPage implements IEditObject {
 
 	private string $autoSumm = '';
 
-	/** @var string */
-	private $hookError = '';
+	private string $hookError = '';
 
 	/** @var ParserOutput|null */
 	private $mParserOutput;
 
-	/** @var bool */
-	public $mShowSummaryField = true;
+	public bool $mShowSummaryField = true;
 
 	# Form values
 
-	/** @var bool */
-	public $save = false;
+	public bool $save = false;
 
-	/** @var bool */
-	public $preview = false;
+	public bool $preview = false;
 
-	/** @var bool */
-	private $diff = false;
+	private bool $diff = false;
 
 	private bool $minoredit = false;
 
 	private bool $watchthis = false;
 
-	/** @var bool Corresponds to $wgWatchlistExpiry */
-	private $watchlistExpiryEnabled;
+	/** Corresponds to $wgWatchlistExpiry */
+	private bool $watchlistExpiryEnabled;
 
 	/** The expiry time of the watch item, or null if it is not watched temporarily. */
 	private ?string $watchlistExpiry = null;
 
-	/** @var bool Corresponds to $wgEnableWatchlistLabels */
+	/** Corresponds to $wgEnableWatchlistLabels */
 	private bool $watchlistLabelsEnabled;
 
 	/** @var int[] Watchlist label IDs submitted in the form */
@@ -269,8 +259,7 @@ class EditPage implements IEditObject {
 
 	private bool $recreate = false;
 
-	/** @var bool */
-	private $ignoreRevisionDeletedWarning = false;
+	private bool $ignoreRevisionDeletedWarning = false;
 
 	/**
 	 * Page content input field.
@@ -279,11 +268,8 @@ class EditPage implements IEditObject {
 
 	public string $summary = '';
 
-	/**
-	 * @var bool
-	 * If true, hide the summary field.
-	 */
-	private $nosummary = false;
+	/** If true, hide the summary field. */
+	private bool $nosummary = false;
 
 	/**
 	 * Timestamp of the latest revision of the page when editing was initiated
@@ -332,8 +318,7 @@ class EditPage implements IEditObject {
 	 */
 	private int $parentRevId = 0;
 
-	/** @var int|null */
-	private $scrolltop = null;
+	private ?int $scrolltop = null;
 
 	private bool $markAsBot = true;
 
@@ -363,13 +348,12 @@ class EditPage implements IEditObject {
 	/** @var string */
 	public $previewTextAfterContent = '';
 
-	/** @var bool should be set to true whenever an article was successfully altered. */
-	public $didSave = false;
+	/** Should be set to true whenever an article was successfully altered. */
+	public bool $didSave = false;
 	public int $undidRev = 0;
 	private int $undoAfter = 0;
 
-	/** @var bool */
-	public $suppressIntro = false;
+	public bool $suppressIntro = false;
 
 	private int|false $contentLength = false;
 
@@ -380,14 +364,10 @@ class EditPage implements IEditObject {
 
 	protected IContextSource $context;
 
-	/**
-	 * @var bool Whether an old revision is edited
-	 */
-	private $isOldRev = false;
+	/** Whether an old revision is edited */
+	private bool $isOldRev = false;
 
-	/**
-	 * What the user submitted in the 'wpUnicodeCheck' field
-	 */
+	/** What the user submitted in the 'wpUnicodeCheck' field */
 	private string $unicodeCheck = '';
 
 	/** @var callable|null */
@@ -428,11 +408,11 @@ class EditPage implements IEditObject {
 	/** Whether temp user creation will be attempted */
 	private bool $tempUserCreateActive = false;
 
-	/** @var string|null If a temp user name was acquired, this is the name */
-	private $tempUserName;
+	/** If a temp user name was acquired, this is the name */
+	private ?string $tempUserName = null;
 
-	/** @var bool Whether temp user creation was successful */
-	private $tempUserCreateDone = false;
+	/** Whether temp user creation was successful */
+	private bool $tempUserCreateDone = false;
 
 	/** Whether temp username acquisition failed (false indicates no failure or not attempted) */
 	private bool $unableToAcquireTempName = false;

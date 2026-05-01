@@ -112,6 +112,7 @@ because of Phabricator reports.
   deprecation warnings. Use PatrolManager::createPatrolLog instead.
 * The MarkPatrolledComplete hook has been deprecated and will trigger
   deprecation warnings. Use the MarkPatrolledAudit hook instead.
+* ResourceLoader::inDebugMode is now deprecated and emits deprecation warnings.
 * …
 
 === Other changes in 1.47 ===

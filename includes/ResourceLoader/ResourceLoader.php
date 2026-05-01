@@ -1755,9 +1755,11 @@ MESSAGE;
 	 * - 2) Cookie,
 	 * - 3) Site configuration.
 	 *
+	 * @deprecated since 1.47
 	 * @return int
 	 */
 	public static function inDebugMode() {
+		wfDeprecated( __METHOD__, '1.47' );
 		if ( self::$debugMode === null ) {
 			$resourceLoaderDebug = MediaWikiServices::getInstance()->getMainConfig()->get(
 				MainConfigNames::ResourceLoaderDebug );

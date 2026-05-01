@@ -212,7 +212,7 @@ class EditPage implements IEditObject {
 
 	private bool $allowBlankSummary = false;
 
-	protected bool $blankArticle = false;
+	private bool $blankArticle = false;
 
 	private bool $allowBlankArticle = false;
 
